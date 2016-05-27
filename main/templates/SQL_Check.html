@@ -1,0 +1,71 @@
+<h1 class="page-header">SQL Check</h1>
+<!-- DataTables CSS -->
+<link rel="stylesheet" type="text/css" href="/static/css/jquery.dataTables.css">
+
+<!-- jQuery -->
+<script type="text/javascript" charset="utf8" src="/static/js/jquery.js"></script>
+
+<!-- DataTables -->
+<script type="text/javascript" charset="utf8" src="/static/js/jquery.dataTables.js"></script>
+
+<div class="container-fluid">
+	<!--<form class="form-signin">-->
+	<div class="row">
+		<label for="inputSQL">Please input your SQL request:</label>
+		<textarea id="inputSQL" class="form-control" placeholder="SQL" rows="10" required autofocus></textarea>
+	</div>
+	<div class="row" align="right">
+		<button class="btn btn-lg btn-primary" id="CheckSQL">Check</button>
+		<button class="btn btn-lg btn-warning" type="reset">Reset</button>
+	</div>
+
+	<div class="row">
+		<label for="result">Result:</label>
+		<table id="table_id" class="display">
+			<thead>
+				<tr>
+					<th>ID</th>
+					<th>stage</th>
+					<th>errlevel</th>
+					<th>stagestatus</th>
+					<th>errormessage</th>
+					<th>SQL</th>
+					<th>Affected_rows</th>
+					<th>sequence</th>
+					<th>backup_dbname</th>
+					<th>execute_time</th>
+					<th>sqlsha1</th>
+				</tr>
+			</thead>
+		</table>
+	</div>
+
+	<!--</form>-->
+
+	<script>
+		$(document).ready(function() {
+			$('#table_id').DataTable();
+			$("#CheckSQL").click(function() {
+				var a = $("#inputSQL").val();
+				$.post("/sqlcommit/", {
+					'sql': a
+				}, function(ret) {
+					alert(ret);
+					var rows = [];
+					for (var i = 0, l = ret.length; i < l; i++) {
+						var row = []
+						for (var j = 0, k = ret[i].length; j < k; j++) {
+							for (var key in ret[i][j]) {
+								row.push(ret[i][j][key]);
+							}
+						}
+						rows.push(row);
+					}
+					$('#table_id').dataTable().fnClearTable();
+					$('#table_id').dataTable().fnAddData(rows);
+					alert('ss');
+				})
+			});
+		});
+	</script>
+</div>
