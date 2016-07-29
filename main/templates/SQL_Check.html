@@ -14,6 +14,15 @@
 		<label for="inputSQL">Please input your SQL request:</label>
 		<textarea id="inputSQL" class="form-control" placeholder="SQL" rows="10" required autofocus></textarea>
 	</div>
+	<div class="row">
+		<code>
+			<p>Example:</p>
+			<p>/*--user=root;--password=sf123456;--host=10.202.4.39;--execute=1;--port=3306;*/</p>
+			<p>inception_magic_start;</p>
+			<p>use db1;</p>
+			<p>inception_magic_commit;</p>
+		</code>
+	</div>
 	<div class="row" align="right">
 		<button class="btn btn-lg btn-primary" id="CheckSQL">Check</button>
 		<button class="btn btn-lg btn-warning" type="reset">Reset</button>
@@ -44,26 +53,27 @@
 
 	<script>
 		$(document).ready(function() {
-			$('#table_id').DataTable();
+			$('#table_id').dataTable();
 			$("#CheckSQL").click(function() {
 				var a = $("#inputSQL").val();
 				$.post("/sqlcommit/", {
 					'sql': a
 				}, function(ret) {
-					alert(ret);
 					var rows = [];
+					var columns = [];
 					for (var i = 0, l = ret.length; i < l; i++) {
 						var row = []
 						for (var j = 0, k = ret[i].length; j < k; j++) {
 							for (var key in ret[i][j]) {
 								row.push(ret[i][j][key]);
+								if(i==0){
+									columns.push(key);
+								}
 							}
 						}
 						rows.push(row);
 					}
-					$('#table_id').dataTable().fnClearTable();
 					$('#table_id').dataTable().fnAddData(rows);
-					alert('ss');
 				})
 			});
 		});
